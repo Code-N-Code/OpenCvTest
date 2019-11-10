@@ -1,0 +1,2 @@
+include ':app', 'openCvLibrary401'
+rootProject.name='OpenCvTest'
