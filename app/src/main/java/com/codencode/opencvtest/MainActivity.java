@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity{
     StringBuffer mQueryBuffer , mEquation;
     char[] mCharList;
     private static final String TAG = "MainActivity";
+    boolean hasVariable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity{
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hasVariable = false;
                 mEquation.delete(0 , mEquation.length());
                 mQueryBuffer.delete(0 , mQueryBuffer.length());
                 mResTextView.setText("Res = ");
@@ -227,8 +230,10 @@ public class MainActivity extends AppCompatActivity{
 
         for(int i=0;i<_finalPoints.size();i++)
         {
+
             Rect rect = _finalPoints.get(i);
-            Imgproc.rectangle(rgba , rect , new Scalar(0 , 0 , 255) ,1);
+            Imgproc.rectangle(rgba , rect, new Scalar(0 , 0 , 255) ,1);
+//            Imgproc.rectangle(rgba , Imgproc.boundingRect(contours.get(i)) , new Scalar(0 , 0 , 255) ,1);
         }
         Utils.matToBitmap(rgba , tmp);
         mImage.setImageBitmap(tmp);
@@ -263,6 +268,9 @@ public class MainActivity extends AppCompatActivity{
             if (!st.isEmpty())
             {
                 mCharList[i] = getChar(st.charAt(0));
+                if(mCharList[i] == 'x' || mCharList[i] == 'X')
+                    hasVariable = true;
+
                 if(i > 0 && (Character.isDigit(mCharList[i])) && (mCharList[i-1] != '-') && (mCharList[i-1] != '+') && (mCharList[i-1] != '*') && (mCharList[i-1] != '=') && (mCharList[i-1] != ')') && (mCharList[i-1] != '('))
                 {
                     Rect r1 = originalPoints.get(i);
@@ -284,6 +292,11 @@ public class MainActivity extends AppCompatActivity{
         //end of block
 
         mResTextView.setText(mEquation.toString());
+
+        ZeroDegreeSolver solver = new ZeroDegreeSolver();
+        double res = solver.solve(mEquation.toString());
+        mResTextView.setText("res = " + res);
+
     }
 
     public char getChar(char c)

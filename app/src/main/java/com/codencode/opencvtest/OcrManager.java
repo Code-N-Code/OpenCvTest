@@ -18,7 +18,7 @@ public class OcrManager {
     {
         if(baseAPI == null)
             initApi();
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST , "x0123456789+-()");
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST , "x0123456789+-*()");
         baseAPI.setImage(bitmap);
         return baseAPI.getUTF8Text();
     }
